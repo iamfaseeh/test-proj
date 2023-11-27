@@ -1,6 +1,8 @@
 FROM ruby:2.7.1-alpine
 RUN apk add --update build-base libffi-dev tzdata postgresql-dev
 
+RUN mkdir /application
+
 WORKDIR /application
 
 COPY Gemfile* /application
