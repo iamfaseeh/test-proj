@@ -8,12 +8,7 @@ jobs:
     services: 
       db:
         image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: oms_api_test
         ports: ['5432:5432']
-
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -26,13 +21,22 @@ jobs:
         with:
           ruby-version: 2.7.1
           bundler-cache: true
+      env:
+        DATABASE_URL: postgres://postgres:@localhost:5432/test
+        RAILS_ENV: test
       - name: Install Dependencies
         run: |
           sudo apt install -yqq libpq-dev
           gem install bundler
 
-      - name: Install Gems and prepare db
+      - name: Install Gems
         run: |
           bundle install --jobs 4 --retry 3
-          bundle exec rails db:prepare
+
+      - name: Prepare db
+        run: |
+          bundle exec rails db:setup
+      
+      - name: Run Tests
+        run: |
           bundle exec rails test
