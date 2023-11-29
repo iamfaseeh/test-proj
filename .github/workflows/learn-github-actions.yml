@@ -13,7 +13,8 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: oms_api_test
           RAILS_ENV: test
-        ports: ['5432:5432']
+        ports:
+          - 5432/tcp
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -36,6 +37,9 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       - name: Prepare db
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
         run: |
           bundle exec rails db:setup
       
