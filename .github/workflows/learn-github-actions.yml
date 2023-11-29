@@ -1,21 +1,21 @@
 name: CI-workflow
 
-on:
-  push:
-    branches: [ implemented-docker-in-rails-app ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_requests]
 jobs:
   test:
     runs-on: ubuntu-latest
 
     services: 
       db:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+        image: postgres:latest
         ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
     steps:
       - uses: actions/checkout@v2
       - name: Setup Ruby
@@ -23,11 +23,17 @@ jobs:
         with:
           ruby-version: 2.7.1
           bundler-cache: true
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: oms_api_test
       - name: Install Dependencies
         run: |
           sudo apt install -yqq libpq-dev
           gem install bundler
 
-      - name: Install Gems
+      - name: Install Gems and prepare db
         run: |
-          bundle install
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:prepare
+          bundle exec rails test

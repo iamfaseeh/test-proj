@@ -1,26 +1,28 @@
 version: '3'
 services:
   my-rails-app:
-    command: "bundle exec rails s -p 3000 -b '0.0.0.0'"
+    build: .
     image: my-rails-app:1.2
-    environment:
-      - DB_NAME=oms_api_development
-      - DB_HOST=db
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
+    container_name: my-rails-app-latest
     ports:
       - 3000:3000
+    volumes:
+      - .:/app:cached
+      - gem_cache:/usr/local/bundle/gems
+    env_file: 
+      - ".env"
+    depends_on:
+      - db
   db:
-    image: postgres
+    image: postgres:latest
+    container_name: my-rails-app-postgres-latest
     restart: always
     ports:
       - 5432:5432
-    environment:
-      - POSTGRES_DB=oms_api_development
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file: 
+      - ".env"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 volumes:
   postgres-data:
-    driver: local
+  gem_cache:
