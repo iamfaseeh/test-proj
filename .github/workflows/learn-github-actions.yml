@@ -14,6 +14,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
       - uses: actions/checkout@v2
       - name: Setup Ruby
@@ -21,9 +22,10 @@ jobs:
         with:
           ruby-version: 2.7.1
           bundler-cache: true
-      env:
-        DATABASE_URL: postgres://postgres:@localhost:5432/test
-        RAILS_ENV: test
+      - name: set environment variable
+        env:
+          DATABASE_URL: postgres://postgres:@localhost:5432/test
+          RAILS_ENV: test
       - name: Install Dependencies
         run: |
           sudo apt install -yqq libpq-dev
