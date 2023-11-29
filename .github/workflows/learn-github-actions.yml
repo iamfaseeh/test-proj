@@ -37,11 +37,11 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       - name: Prepare db
+        run: |
+          bundle exec rails db:setup
         env:
           POSTGRES_HOST: db
           POSTGRES_PORT: 5432
-        run: |
-          bundle exec rails db:setup
       
       - name: Run Tests
         run: |
