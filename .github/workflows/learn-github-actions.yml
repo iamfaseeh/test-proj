@@ -40,15 +40,13 @@ jobs:
         run: sleep 10
 
       - name: Prepare db
+        env:
+          PG_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          RAILS_ENV: test
         run: |
           bundle exec rails db:setup
-        env:
-          PG_DATABASE: postgres
-          PG_HOST: localhost
-          PG_PORT: 5432
-          PG_USER: postgres
-          PG_PASSWORD: postgres
-          RAILS_ENV: test
       
       - name: Run Tests
         run: |

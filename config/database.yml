@@ -18,8 +18,12 @@ development:
   database: <%= ENV['DB_NAME'] %>
 
 test:
-  <<: *default
   database: oms_api_test
+  adapter: postgresql
+  host: localhost
+  encoding: unicode
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
