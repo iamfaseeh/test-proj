@@ -6,13 +6,11 @@ jobs:
     runs-on: ubuntu-latest
 
     services: 
-      db:
-        image: postgres
+      postgres:
+        image: postgres:latest
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: oms_api_test
-          RAILS_ENV: test
         ports:
           - 5432:5432
         options: >-
@@ -41,9 +39,8 @@ jobs:
 
       - name: Prepare db
         env:
-          PG_PORT: 5432
-          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
           RAILS_ENV: test
         run: |
           bundle exec rails db:setup
