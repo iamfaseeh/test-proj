@@ -22,11 +22,10 @@ jobs:
         with:
           ruby-version: 2.7.1
           bundler-cache: true
-      - name: set environment variable
+      - name: set environment variable and install dependencies
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
           RAILS_ENV: test
-      - name: Install Dependencies
         run: |
           sudo apt install -yqq libpq-dev
           gem install bundler
