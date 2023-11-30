@@ -2,20 +2,17 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  # host: db
-  # username: postgres
-  # password: postgres
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
 
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: <%= ENV['DB_HOST'] %>
   username: <%= ENV["POSTGRES_USER"] %>
   password: <%= ENV["POSTGRES_PASSWORD"] %>
 
 development:
   <<: *default
-  database: <%= ENV['DB_NAME'] %>
+  database: <%= ENV['POSTGRES_DB'] %>
+  host: localhost
 
 test:
   database: oms_api_test

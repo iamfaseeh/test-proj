@@ -32,7 +32,7 @@ group :development, :test, :staging do
   gem 'bullet'
   gem 'database_cleaner-active_record', '~> 2.0.1'
   gem 'factory_bot_rails'
-  gem 'faker'
+  gem 'faker', '~> 3.2', '>= 3.2.2'
   gem 'rspec-rails', '~> 5.0.0'
   gem 'rswag-specs'
   gem 'rubycritic', require: false
