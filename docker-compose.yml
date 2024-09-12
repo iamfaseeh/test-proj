@@ -1,0 +1,28 @@
+version: '3'
+services:
+  my-rails-app:
+    build: .
+    image: my-rails-app:1.2
+    container_name: my-rails-app-latest
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app:cached
+      - gem_cache:/usr/local/bundle/gems
+    env_file: 
+      - ".env"
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    container_name: my-rails-app-postgres-latest
+    restart: always
+    ports:
+      - 5432:5432
+    env_file: 
+      - ".env"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:
+  gem_cache:

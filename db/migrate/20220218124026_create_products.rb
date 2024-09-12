@@ -11,9 +11,6 @@ class CreateProducts < ActiveRecord::Migration[6.0]
       t.timestamps
     end
 
-    execute 'CREATE SEQUENCE products_upc_sequence START 1000'
-    execute "ALTER TABLE products ALTER COLUMN upc SET DEFAULT NEXTVAL('products_upc_sequence')"
-
     add_index :products, :title
     add_index :products, :upc, unique: true
   end

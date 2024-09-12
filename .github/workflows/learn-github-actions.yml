@@ -1,0 +1,61 @@
+name: CI-workflow
+
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services: 
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: oms_api_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.1
+          bundler-cache: true
+      - name: Install Dependencies
+        run: |
+          sudo apt install -yqq libpq-dev
+          gem install bundler
+
+      - name: Install Gems
+        run: |
+          bundle install --jobs 4 --retry 3
+
+      - name: Wait for PostgreSQL
+        run: sleep 10
+
+      - name: Prepare db
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          RAILS_ENV: test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        run: |
+          bundle exec rails db:drop db:create db:migrate
+        
+      - name: Build and Push docker Image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: 07150867/my-rails-app
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      
+      # - name: Run Tests
+      #   run: |
+      #     bundle exec rspec
